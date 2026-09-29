@@ -1,0 +1,68 @@
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background: radial-gradient(1200px 600px at 20% -10%, #ffd6e8 0%, transparent 60%),
+              radial-gradient(1000px 500px at 90% 0%, #cdb4ff 0%, transparent 55%),
+              linear-gradient(180deg,#1a1033 0%, #2b1a4d 40%, #3d2358 100%);
+  color:#fff; min-height:100vh;
+}
+a{color:inherit}
+button{font-family:inherit}
+@keyframes floatUp{0%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-140px) scale(1.3)}}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(0.92)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes wiggle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 30px #ff5d8f88,0 0 80px #b366ff44}50%{box-shadow:0 0 50px #ff5d8fcc,0 0 120px #ffbe0b66}}
+@keyframes frenzyBg{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(40deg)}}
+@keyframes chestShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg) scale(1.05)}75%{transform:rotate(8deg) scale(1.05)}}
+@keyframes bannerIn{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes heartFall{0%{transform:translateY(-20px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+.float-num{position:absolute;pointer-events:none;font-weight:900;animation:floatUp 1s ease-out forwards;text-shadow:0 2px 12px rgba(0,0,0,.6);z-index:50;white-space:nowrap}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.15);border-radius:18px;backdrop-filter:blur(12px)}
+.btn-pink{background:linear-gradient(135deg,#ff5d8f,#ff8f5d);border:none;color:#fff;font-weight:800;border-radius:14px;padding:12px 20px;cursor:pointer;transition:.15s;box-shadow:0 6px 24px #ff5d8f66}
+.btn-pink:hover{transform:translateY(-2px);box-shadow:0 10px 32px #ff5d8fcc}
+.btn-pink:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn-ghost:hover{background:rgba(255,255,255,.16)}
+.tab-active{background:linear-gradient(135deg,#ff5d8f,#b366ff)!important;color:#fff!important}
+.progress{height:10px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
+.progress>div{height:100%;background:linear-gradient(90deg,#ff5d8f,#ffbe0b,#4ade80);border-radius:99px;transition:width .3s}
+.girl-stage{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.girl-stage:active{transform:scale(.94)}
+.toast{animation:bannerIn .35s cubic-bezier(.2,1.4,.4,1)}
+/* ---- living anime-girl motion: idle bob, mood bounces, face fx ---- */
+@keyframes girlBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes girlHappy{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-14px) scale(1.03)}60%{transform:translateY(0) scale(.98)}}
+@keyframes girlTremble{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-1.5px,1px) rotate(-.8deg)}75%{transform:translate(1.5px,-1px) rotate(.8deg)}}
+@keyframes girlLove{0%,100%{transform:scale(1)}20%{transform:scale(1.05)}40%{transform:scale(1)}60%{transform:scale(1.04)}}
+@keyframes girlPop{0%{transform:scale(.92)}55%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes girlPout{0%,100%{transform:translateX(0) rotate(0)}30%{transform:translateX(-4px) rotate(-1.5deg)}70%{transform:translateX(4px) rotate(1.5deg)}}
+@keyframes girlSad{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes girlSleepy{0%,100%{transform:rotate(-1.5deg) translateY(0)}50%{transform:rotate(1.5deg) translateY(-4px)}}
+@keyframes girlFrenzy{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.05)}}
+@keyframes girlDizzy{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.girl-blink{transform-box:fill-box;transform-origin:center;animation:girlBlink 4.2s infinite}
+@keyframes girlBlink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.06)}}
+.girl-blush{animation:blushPulse 2.4s ease-in-out infinite}
+@keyframes blushPulse{0%,100%{opacity:.75}50%{opacity:1}}
+.girl-ahoge{transform-box:fill-box;transform-origin:bottom left;animation:ahogeWiggle 2.2s ease-in-out infinite}
+@keyframes ahogeWiggle{0%,100%{transform:rotate(0)}50%{transform:rotate(9deg)}}
+.girl-sparkle text{animation:sparkleTwinkle 1.6s ease-in-out infinite}
+.girl-sparkle text:nth-child(2){animation-delay:.4s}
+.girl-sparkle text:nth-child(3){animation-delay:.8s}
+@keyframes sparkleTwinkle{0%,100%{opacity:.5}50%{opacity:1}}
+.girl-sweat{animation:sweatSlide 1.2s ease-in infinite}
+@keyframes sweatSlide{0%{transform:translateY(-4px);opacity:0}25%{opacity:1}100%{transform:translateY(7px);opacity:0}}
+.girl-tear{animation:tearFall 1.4s ease-in infinite}
+@keyframes tearFall{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}
+.girl-hearts text{display:inline-block;animation:heartFloat 1.6s ease-in-out infinite}
+.girl-hearts text:last-child{animation-delay:.5s}
+@keyframes heartFloat{0%,100%{transform:translateY(0);opacity:.8}50%{transform:translateY(-8px);opacity:1}}
+.girl-zzz text{animation:zzzFloat 2.4s ease-out infinite}
+.girl-zzz text:nth-child(2){animation-delay:.5s}
+.girl-zzz text:nth-child(3){animation-delay:1s}
+@keyframes zzzFloat{0%{transform:translateY(4px);opacity:0}30%{opacity:1}100%{transform:translateY(-8px);opacity:0}}
+.girl-dizzy-stars{transform-box:fill-box;transform-origin:center;animation:spinSlow 3s linear infinite}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+.scroll-thin::-webkit-scrollbar{width:6px}
+.scroll-thin::-webkit-scrollbar-thumb{background:#ff5d8f88;border-radius:99px}
