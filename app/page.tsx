@@ -35,6 +35,19 @@ const BP_LEVELS = Array.from({ length: 20 }, (_, i) => {
 });
 
 const SAVE_KEY = "neko-hearts-v1";
+
+// ---- mobile: single hook for responsive sizes + lightweight bg ----
+function useMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 720px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return { isMobile, girlSize: isMobile ? 232 : 300, bgCount: isMobile ? 6 : 14 };
+}
 const fmt = (n: number) => {
   if (n < 1000) return Math.floor(n).toString();
   const u = ["K", "M", "B", "T", "Qa", "Qi"];
@@ -124,6 +137,7 @@ export default function Page() {
   const idRef = useRef(1);
   const sRef = useRef(s);
   sRef.current = s;
+  const { girlSize, bgCount } = useMobile();
 
   // ---- derived stats (EXPENSIVE economy, JUICED payouts to stay addictive) ----
   const stats = useMemo(() => {
@@ -238,7 +252,9 @@ export default function Page() {
   };
 
   // ---- CLICK (the core addiction loop — juiced to afford the expensive shop) ----
-  const doClick = (e: React.MouseEvent) => {
+  // Pointer-first: onPointerDown fires instantly on touch (no click delay)
+  // and per-finger for multi-touch. clientX/Y works for mouse+touch.
+  const doClick = (e: React.PointerEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const x = e.clientX - rect.left, y = e.clientY - rect.top;
     const roll = Math.random();
@@ -609,11 +625,11 @@ export default function Page() {
   const upgradeCost = (base: number, growth: number, lvl: number) => Math.floor(base * Math.pow(growth, lvl));
 
   return (
-    <div key={shake} style={{ maxWidth: 1240, margin: "0 auto", padding: "18px 14px 80px", position: "relative", animation: shake ? "shakeAnim .45s" : undefined }}>
+    <div key={shake} className="app-shell" style={{ animation: shake ? "shakeAnim .45s" : undefined }}>
       <style>{`@keyframes shakeAnim{0%,100%{transform:translate(0)}15%{transform:translate(-10px,4px) rotate(-1deg)}30%{transform:translate(9px,-6px) rotate(1deg)}45%{transform:translate(-7px,-4px)}60%{transform:translate(6px,5px)}80%{transform:translate(-3px,2px)}}`}</style>
-      {/* falling hearts bg */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
-        {Array.from({ length: 14 }).map((_, i) => (
+      {/* falling hearts bg (fewer nodes on phones for smooth 60fps) */}
+      <div className="bg-hearts" aria-hidden>
+        {Array.from({ length: bgCount }).map((_, i) => (
           <div key={i} style={{ position: "absolute", left: `${(i * 73) % 100}%`, top: -30, animation: `heartFall ${7 + (i % 5) * 2}s linear ${i * 0.9}s infinite`, fontSize: 14 + (i % 3) * 8, opacity: 0.5 }}>
             {["💖", "💗", "✨", "🌸"][i % 4]}
           </div>
@@ -621,12 +637,12 @@ export default function Page() {
       </div>
 
       {/* HEADER */}
-      <div className="card" style={{ padding: 16, display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+      <div className="card header-card">
         <div>
           <div style={{ fontSize: 26, fontWeight: 900 }}>💖 NEKO HEARTS <span style={{ fontSize: 13, background: "linear-gradient(135deg,#ff00d4,#b366ff)", padding: "2px 10px", borderRadius: 99 }}>v3.0 💎VIP</span></div>
           <div style={{ opacity: 0.8, fontSize: 13 }}>Collect waifus • Build combos • Never stop clicking</div>
         </div>
-        <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
+        <div className="header-stats">
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>💓 HEARTS</div><div style={{ fontSize: 28, fontWeight: 900, color: "#ff8fb3" }}>{fmt(s.hearts)}</div></div>
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>⚡ PER CLICK</div><div style={{ fontSize: 22, fontWeight: 800 }}>{fmt(stats.clickPower)}</div></div>
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>⏱ PER SEC</div><div style={{ fontSize: 22, fontWeight: 800, color: "#7ef0c9" }}>{fmt(stats.cps)}</div></div>
@@ -657,9 +673,9 @@ export default function Page() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr 340px", gap: 14, marginTop: 14, position: "relative", zIndex: 1 }}>
+      <div className="main-grid">
         {/* LEFT: HAREM */}
-        <div className="card" style={{ padding: 14, alignSelf: "start" }}>
+        <div className="card panel-harem" style={{ padding: 14, alignSelf: "start" }}>
           <h3 style={{ margin: "0 0 4px" }}>💒 My Harem ({Object.keys(s.owned).length}/{GIRLS.length})</h3>
           <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 10 }}>Each girl boosts clicks + idle. Dupes → Bond XP.</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 560, overflowY: "auto" }} className="scroll-thin">
@@ -701,7 +717,7 @@ export default function Page() {
         </div>
 
         {/* CENTER: CLICKER */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="panel-clicker">
           <div className="card" style={{
             padding: "18px 14px 10px", textAlign: "center", position: "relative", overflow: "hidden",
             animation: frenzy > 0 ? "glowPulse 1s infinite, frenzyBg 2s infinite" : "glowPulse 3s infinite",
@@ -722,8 +738,25 @@ export default function Page() {
               </span>
               <span style={{ background: RARITY_COLOR[stats.girl.rarity] + "33", border: `1px solid ${RARITY_COLOR[stats.girl.rarity]}`, padding: "4px 14px", borderRadius: 99, fontWeight: 700, fontSize: 14 }}>{stats.girl.rarity}</span>
             </div>
-            <div className="girl-stage" onClick={doClick} style={{ position: "relative", display: "inline-block", marginTop: 6 }}>
-              <EmotionGirl girl={stats.girl} size={300} mood={mood} squish={squish} sparkle={frenzy > 0 || combo >= 25} />
+            <div
+              className="girl-stage"
+              onPointerDown={doClick}
+              onContextMenu={(e) => e.preventDefault()}
+              role="button"
+              tabIndex={0}
+              aria-label={`Click ${stats.girl.name} for hearts`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                  doClick({ currentTarget: e.currentTarget, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 } as any);
+                }
+              }}
+              style={{ position: "relative", display: "inline-block", marginTop: 6, maxWidth: "100%" }}
+            >
+              <div className="girl-responsive">
+                <EmotionGirl girl={stats.girl} size={girlSize} mood={mood} squish={squish} sparkle={frenzy > 0 || combo >= 25} priority />
+              </div>
               {(frenzy > 0 || combo >= 25) && (
                 <div style={{ position: "absolute", inset: -14, pointerEvents: "none", fontSize: 26 }}>
                   <span style={{ position: "absolute", top: 0, left: 6 }}>✨</span>
@@ -736,15 +769,16 @@ export default function Page() {
                 {mood === "frenzy" ? "🤩 FRENZY MODE — SHE'S OVERLOADED!" : mood === "love" ? "😍 MEGA DOKI-DOKI MODE!" : mood === "dizzy" ? "😵 MEGA CRIT — SHE'S SEEING STARS!" : mood === "wow" ? "😲 CRIT! SHE'S SHOCKED!" : mood === "timid" ? "🥺 S-she's all flustered..." : mood === "pout" ? "😤 H-hmph! Tsundere mode!" : mood === "sad" ? "😢 She misses you... click to cheer her up!" : mood === "sleepy" ? "😴 Shhh... she's dozing off. Click to wake her!" : mood === "wink" ? "😉 She only winks for YOU, senpai~" : combo >= 10 ? "😘 Feeling the love~" : "😊 Click me, senpai!"}
               </div>
               <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 8, flexWrap: "wrap" }}>
-                <button className="btn-ghost" onClick={(e) => { e.stopPropagation(); interact("pat"); }} title="Headpat: small hearts + bond, she smiles">😊 Pat</button>
-                <button className="btn-ghost" onClick={(e) => { e.stopPropagation(); interact("tease"); }} title="Tease: she goes timid (or pouts if tsundere)">🥺 Tease</button>
-                <button className="btn-ghost" onClick={(e) => { e.stopPropagation(); interact("hug"); }} title="Hug: big love + bond, wink at high bond">💖 Hug</button>
+                <button className="btn-ghost" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); interact("pat"); }} title="Headpat: small hearts + bond, she smiles">😊 Pat</button>
+                <button className="btn-ghost" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); interact("tease"); }} title="Tease: she goes timid (or pouts if tsundere)">🥺 Tease</button>
+                <button className="btn-ghost" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); interact("hug"); }} title="Hug: big love + bond, wink at high bond">💖 Hug</button>
               </div>
               {floats.map((f) => (
                 <span key={f.id} className="float-num" style={{ left: f.x, top: f.y, color: f.color, fontSize: f.big ? 30 : 20 }}>{f.text}</span>
               ))}
               {goldens.map((g) => (
-                <button key={g.id} onClick={(e) => { e.stopPropagation(); claimGolden(g.id); }}
+                <button key={g.id} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); claimGolden(g.id); }}
+                  className="golden-btn"
                   style={{ position: "absolute", left: `${g.x}%`, top: `${g.y}%`, fontSize: 40, background: "none", border: "none", cursor: "pointer", animation: "pop .5s infinite", zIndex: 60 }}>🌟</button>
               ))}
             </div>
@@ -754,6 +788,7 @@ export default function Page() {
               {lineHasClip(stats.girl.id, dialogue) && !(s.voiceMuted || s.muted) && (
                 <button className="btn-ghost" style={{ marginLeft: 8, padding: "2px 10px", fontSize: 12, fontStyle: "normal" }}
                   title="Hear her say it again"
+                  onPointerDown={(e) => e.stopPropagation()}
                   onClick={(e) => { e.stopPropagation(); try { unlockVoiceAudio(); playLine(stats.girl.id, dialogue, true); } catch {} }}>
                   🔈 replay
                 </button>
@@ -784,8 +819,8 @@ export default function Page() {
         </div>
 
         {/* RIGHT: TABS */}
-        <div className="card" style={{ padding: 14, alignSelf: "start" }}>
-          <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+        <div className="card panel-tabs" style={{ padding: 14, alignSelf: "start" }}>
+          <div className="tabs-bar">
             {(["shop", "gacha", "quests", "girls", "pass", "vip"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)} className={tab === t ? "btn-pink tab-active" : "btn-ghost"} style={{ flex: 1, padding: "8px 4px", fontSize: 12, textTransform: "capitalize", border: t === "vip" ? "1px solid #ff00d4" : undefined }}>{t === "gacha" ? "🎰" : t === "shop" ? "🛒" : t === "quests" ? "📜" : t === "pass" ? "🎫" : t === "vip" ? "💎" : "🌸"} {t}</button>
             ))}
@@ -978,7 +1013,6 @@ export default function Page() {
         </div>
       </div>
 
-      <style>{`@media(max-width:1000px){div[style*="grid-template-columns: 280px 1fr 340px"]{grid-template-columns:1fr!important}}`}</style>
     </div>
   );
 }

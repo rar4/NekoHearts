@@ -93,7 +93,6 @@ export default function EmotionGirl({
           sizes="(max-width: 720px) 72vw, 300px"
           priority={priority}
           loading={priority ? undefined : "lazy"}
-          decoding="async"
           draggable={false}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: PHOTO_FILTER[mood], transition: "filter .3s" }}
           onError={() => {

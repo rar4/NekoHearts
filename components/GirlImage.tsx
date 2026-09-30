@@ -41,7 +41,6 @@ export default function GirlImage({
         sizes={`(max-width: 720px) 56px, ${size}px`}
         priority={eager}
         loading={eager ? undefined : "lazy"}
-        decoding="async"
         draggable={false}
         style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
       />

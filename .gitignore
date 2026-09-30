@@ -22,3 +22,6 @@ npm-debug.log*
 # Env files
 .env
 .env*.local
+
+# TypeScript incremental build info
+*.tsbuildinfo
