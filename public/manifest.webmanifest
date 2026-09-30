@@ -1,0 +1,24 @@
+{
+  "name": "Neko Hearts — Anime Girl Clicker",
+  "short_name": "Neko Hearts",
+  "description": "Collect waifus • Build combos • Never stop clicking",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1033",
+  "theme_color": "#1a1033",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/girls/yuki.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
