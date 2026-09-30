@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { GirlDef, RARITY_COLOR } from "../lib/girls";
 import { GirlMood, MOOD_ANIM } from "./AnimeGirl";
 
@@ -38,12 +39,14 @@ export default function EmotionGirl({
   mood = "smile",
   squish = false,
   sparkle = false,
+  priority = false,
 }: {
   girl: GirlDef;
   size?: number;
   mood?: GirlMood;
   squish?: boolean;
   sparkle?: boolean;
+  priority?: boolean;
 }) {
   const color = RARITY_COLOR[girl.rarity];
   const key = `${girl.id}-${mood}`;
@@ -63,7 +66,7 @@ export default function EmotionGirl({
   );
 
   return (
-    <div style={{ width: size, height: size, animation: MOOD_ANIM[mood] }}>
+    <div style={{ width: size, height: size, maxWidth: "100%", animation: MOOD_ANIM[mood], touchAction: "manipulation" }}>
       <div
         style={{
           width: "100%",
@@ -79,16 +82,20 @@ export default function EmotionGirl({
           position: "relative",
           background: "#221433",
           flexShrink: 0,
+          touchAction: "manipulation",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={src}
           alt={girl.name}
           width={size}
           height={size}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: PHOTO_FILTER[mood], transition: "filter .3s" }}
+          sizes="(max-width: 720px) 72vw, 300px"
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
+          decoding="async"
           draggable={false}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: PHOTO_FILTER[mood], transition: "filter .3s" }}
           onError={() => {
             if (src !== girl.image) {
               variantCache[key] = false;

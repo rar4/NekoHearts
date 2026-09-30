@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { GirlDef } from "../lib/girls";
 import { RARITY_COLOR } from "../lib/girls";
 
@@ -6,10 +7,12 @@ export default function GirlImage({
   girl,
   size = 260,
   glow = false,
+  eager = false,
 }: {
   girl: GirlDef;
   size?: number;
   glow?: boolean;
+  eager?: boolean;
 }) {
   const color = RARITY_COLOR[girl.rarity];
   return (
@@ -17,6 +20,7 @@ export default function GirlImage({
       style={{
         width: size,
         height: size,
+        maxWidth: "100%",
         borderRadius: size * 0.18,
         overflow: "hidden",
         border: `4px solid ${color}`,
@@ -26,16 +30,20 @@ export default function GirlImage({
         position: "relative",
         background: "#221433",
         flexShrink: 0,
+        touchAction: "manipulation",
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={girl.image}
         alt={girl.name}
         width={size}
         height={size}
-        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        sizes={`(max-width: 720px) 56px, ${size}px`}
+        priority={eager}
+        loading={eager ? undefined : "lazy"}
+        decoding="async"
         draggable={false}
+        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
       />
       <div
         style={{
