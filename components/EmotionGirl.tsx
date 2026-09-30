@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { GirlDef, RARITY_COLOR } from "../lib/girls";
+import { markVariantKnown, variantKnownMissing } from "../lib/preload";
 import { GirlMood, MOOD_ANIM } from "./AnimeGirl";
 
 // Real-photo anime girl with living emotions — no SVG.
@@ -51,10 +52,13 @@ export default function EmotionGirl({
   const color = RARITY_COLOR[girl.rarity];
   const key = `${girl.id}-${mood}`;
   const variantSrc = `/girls/${key}.jpg`;
-  const [src, setSrc] = useState(variantCache[key] === false ? girl.image : variantSrc);
+  // Skip the variant request entirely when the preloader already proved it 404s.
+  const [src, setSrc] = useState(
+    variantCache[key] === false || variantKnownMissing(key) ? girl.image : variantSrc
+  );
 
   useEffect(() => {
-    setSrc(variantCache[key] === false ? girl.image : variantSrc);
+    setSrc(variantCache[key] === false || variantKnownMissing(key) ? girl.image : variantSrc);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
@@ -80,12 +84,12 @@ export default function EmotionGirl({
             ? `0 0 30px ${color}cc, 0 0 80px ${color}66`
             : "0 8px 30px rgba(0,0,0,.45)",
           position: "relative",
-          background: "#221433",
+          background: "linear-gradient(135deg,#ff5d8f55,#b366ff55)",
           flexShrink: 0,
           touchAction: "manipulation",
-        }}
-      >
-        <Image
+          }}
+          >
+          <Image
           src={src}
           alt={girl.name}
           width={size}
@@ -98,11 +102,15 @@ export default function EmotionGirl({
           onError={() => {
             if (src !== girl.image) {
               variantCache[key] = false;
+              markVariantKnown(key, false);
               setSrc(girl.image);
             }
           }}
           onLoad={() => {
-            if (src === variantSrc) variantCache[key] = true;
+            if (src === variantSrc) {
+              variantCache[key] = true;
+              markVariantKnown(key, true);
+            }
           }}
         />
         {/* bottom vignette for readability */}

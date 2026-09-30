@@ -28,7 +28,7 @@ export default function GirlImage({
           ? `0 0 30px ${color}cc, 0 0 80px ${color}66`
           : `0 8px 30px rgba(0,0,0,.45)`,
         position: "relative",
-        background: "#221433",
+        background: "linear-gradient(135deg,#ff5d8f55,#b366ff55)",
         flexShrink: 0,
         touchAction: "manipulation",
       }}

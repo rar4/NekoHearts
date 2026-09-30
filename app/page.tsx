@@ -5,6 +5,8 @@ import { GirlMood, GIRL_MOODS } from "../components/AnimeGirl";
 import EmotionGirl from "../components/EmotionGirl";
 import { GIRLS, RARITY_COLOR, rollGirl, GirlDef } from "../lib/girls";
 import { sfx, setMuted } from "../lib/sound";
+import { preloadCritical, preloadRest } from "../lib/preload";
+import LoadingScreen from "../components/LoadingScreen";
 import { playLine, lineHasClip, clickSignatureSay, signatureSay, unlockVoiceAudio, setVoiceMuted } from "../lib/voiceAudio";
 
 type Owned = Record<string, number>;
@@ -133,6 +135,7 @@ export default function Page() {
     moodTimer.current = setTimeout(() => setMood(fallback), ms);
   };
   const [offlineMsg, setOfflineMsg] = useState("");
+  const [assets, setAssets] = useState({ loaded: 0, total: 1, done: false });
   const comboTimer = useRef<any>(null);
   const idRef = useRef(1);
   const sRef = useRef(s);
@@ -193,6 +196,15 @@ export default function Page() {
     setS(sv); setLoaded(true);
     setMuted(!!sv.muted);
     setVoiceMuted(!!sv.muted || !!(sv as Save).voiceMuted);
+    // Gate the game on preloaded portraits so images never flash black.
+    // Remaining expressions keep warming in the background after start.
+    const sel = sv.selected ?? "yuki";
+    void preloadCritical(sel, (loaded, total) =>
+      setAssets({ loaded, total, done: false })
+    ).then(() => {
+      setAssets((a) => ({ ...a, done: true }));
+      preloadRest(sel);
+    });
   }, []);
 
   // ---- voice clips: browsers require a user gesture before any audio ----
@@ -620,7 +632,7 @@ export default function Page() {
     setS(freshSave());
   };
 
-  if (!loaded) return <div style={{ padding: 60, textAlign: "center" }}>Loading doki-doki... 💓</div>;
+  if (!loaded || !assets.done) return <LoadingScreen loaded={assets.loaded} total={assets.total} />;
 
   const upgradeCost = (base: number, growth: number, lvl: number) => Math.floor(base * Math.pow(growth, lvl));
 
