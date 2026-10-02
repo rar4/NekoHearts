@@ -16,6 +16,8 @@ interface FloatNum { id: number; x: number; y: number; text: string; color: stri
 interface Toast { id: number; title: string; desc: string; color: string }
 interface Golden { id: number; x: number; y: number; expires: number }
 
+type Tab = "shop" | "gacha" | "quests" | "girls" | "pass" | "vip";
+
 interface Save {
   hearts: number; totalHearts: number; totalClicks: number;
   gems: number; prestiges: number; rolls: number;
@@ -119,7 +121,14 @@ export default function Page() {
   const [floats, setFloats] = useState<FloatNum[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [goldens, setGoldens] = useState<Golden[]>([]);
-  const [tab, setTab] = useState<"shop" | "gacha" | "quests" | "girls" | "pass" | "vip">("shop");
+  const [tab, setTab] = useState<Tab>("shop");
+  // ---- mobile bottom-nav: clicker is its own screen, shop/gacha/etc are separate menu screens ----
+  const [mScreen, setMScreen] = useState<"clicker" | Tab>("clicker");
+  const goMobile = (s: "clicker" | Tab) => {
+    setMScreen(s);
+    if (s !== "clicker") setTab(s);
+    try { window.scrollTo({ top: 0 }); } catch {}
+  };
   const [gachaAnim, setGachaAnim] = useState<null | { rolling: boolean; result?: GirlDef; isNew?: boolean }>(null);
   const [dialogue, setDialogue] = useState("Yuki: C-click me, senpai... every click makes my heart beat faster~ 💓");
   const [squish, setSquish] = useState(false);
@@ -140,7 +149,7 @@ export default function Page() {
   const idRef = useRef(1);
   const sRef = useRef(s);
   sRef.current = s;
-  const { girlSize, bgCount } = useMobile();
+  const { isMobile, girlSize, bgCount } = useMobile();
 
   // ---- derived stats (EXPENSIVE economy, JUICED payouts to stay addictive) ----
   const stats = useMemo(() => {
@@ -642,7 +651,7 @@ export default function Page() {
   const upgradeCost = (base: number, growth: number, lvl: number) => Math.floor(base * Math.pow(growth, lvl));
 
   return (
-    <div key={shake} className="app-shell" style={{ animation: shake ? "shakeAnim .45s" : undefined }}>
+    <div key={shake} className={`app-shell${isMobile ? (mScreen === "clicker" ? " m-clicker" : " m-menu") : ""}`} style={{ animation: shake ? "shakeAnim .45s" : undefined }}>
       <style>{`@keyframes shakeAnim{0%,100%{transform:translate(0)}15%{transform:translate(-10px,4px) rotate(-1deg)}30%{transform:translate(9px,-6px) rotate(1deg)}45%{transform:translate(-7px,-4px)}60%{transform:translate(6px,5px)}80%{transform:translate(-3px,2px)}}`}</style>
       {/* falling hearts bg (fewer nodes on phones for smooth 60fps) */}
       <div className="bg-hearts" aria-hidden>
@@ -664,7 +673,7 @@ export default function Page() {
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>⚡ PER CLICK</div><div style={{ fontSize: 22, fontWeight: 800 }}>{fmt(stats.clickPower)}</div></div>
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>⏱ PER SEC</div><div style={{ fontSize: 22, fontWeight: 800, color: "#7ef0c9" }}>{fmt(stats.cps)}</div></div>
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>💎 GEMS</div><div style={{ fontSize: 22, fontWeight: 800, color: "#c4b5fd" }}>{s.gems}</div></div>
-          <button className="btn-pink" onClick={() => setTab("vip")} style={{ padding: "8px 14px", fontSize: 13 }}>💎 VIP SHOP</button>
+          <button className="btn-pink" onClick={() => goMobile("vip")} style={{ padding: "8px 14px", fontSize: 13 }}>💎 VIP SHOP</button>
           <button className="btn-ghost" onClick={toggleMute} title="toggle all sound">{s.muted ? "🔇 muted" : "🔊 sound"}</button>
           <button className="btn-ghost" onClick={toggleVoice} title="toggle girl voice clips">{(s.voiceMuted || s.muted) ? "🎙 voice off" : "🎙 voice on"}</button>
         </div>
@@ -679,7 +688,7 @@ export default function Page() {
         <div className="progress"><div style={{ width: `${stats.levelProg * 100}%` }} /></div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, margin: "8px 0 4px" }}>
           <span>🎫 Pass S1: {(s.bpClaimed ?? []).length}/20 claimed • {fmt(s.bpXp ?? 0)} XP</span>
-          <button className="btn-ghost" style={{ padding: "2px 10px", fontSize: 12 }} onClick={() => setTab("pass")}>Open pass →</button>
+          <button className="btn-ghost" style={{ padding: "2px 10px", fontSize: 12 }} onClick={() => goMobile("pass")}>Open pass →</button>
         </div>
         <div className="progress"><div style={{ width: `${Math.min(100, ((s.bpXp ?? 0) / 24000) * 100)}%` }} /></div>
       </div>
@@ -1029,6 +1038,18 @@ export default function Page() {
           <div>💎 <b>Isekai prestige + VIP</b> — sunk-cost alchemy: turns quitting pain into "investment". Gems now +15% each, but rebirth costs 500K hearts. VIP gem items are permanent, whale-priced, and break the rules (auto-clicker, combo saver, divine pulls).</div>
         </div>
       </div>
+
+      {/* MOBILE BOTTOM NAV — separate menu screens (hidden on desktop via CSS) */}
+      <nav className="mobile-nav" aria-label="Game menu">
+        <button className={mScreen === "clicker" ? "mnav-btn active" : "mnav-btn"} onClick={() => goMobile("clicker")} aria-label="Main clicker">
+          <span className="ico">🏠</span><span>Click</span>
+        </button>
+        {(["shop", "gacha", "quests", "girls", "pass", "vip"] as const).map((t) => (
+          <button key={t} className={mScreen === t ? "mnav-btn active" : "mnav-btn"} onClick={() => goMobile(t)} aria-label={t} style={{ textTransform: "capitalize" }}>
+            <span className="ico">{t === "gacha" ? "🎰" : t === "shop" ? "🛒" : t === "quests" ? "📜" : t === "pass" ? "🎫" : t === "vip" ? "💎" : "🌸"}</span><span>{t}</span>
+          </button>
+        ))}
+      </nav>
 
     </div>
   );
