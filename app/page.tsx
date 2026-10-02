@@ -677,20 +677,19 @@ export default function Page() {
           <button className="btn-ghost" onClick={toggleMute} title="toggle all sound">{s.muted ? "🔇 muted" : "🔊 sound"}</button>
           <button className="btn-ghost" onClick={toggleVoice} title="toggle girl voice clips">{(s.voiceMuted || s.muted) ? "🎙 voice off" : "🎙 voice on"}</button>
         </div>
-      </div>
-
-      {/* LEVEL BAR — always almost leveling ( endowed progress effect ) */}
-      <div className="card" style={{ marginTop: 12, padding: "10px 16px", zIndex: 1, position: "relative" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
-          <span>🎚 Senpai Lv.{stats.level} <span style={{ opacity: 0.6 }}>({fmt(s.totalClicks)} clicks • {fmt(s.totalHearts)} lifetime)</span></span>
-          <span style={{ color: "#ffbe0b" }}>{Math.floor(stats.levelProg * 100)}% — SO CLOSE!</span>
+        {/* LEVEL BARS — live inside the main header now */}
+        <div style={{ width: "100%" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
+            <span>🎚 Senpai Lv.{stats.level} <span style={{ opacity: 0.6 }}>({fmt(s.totalClicks)} clicks • {fmt(s.totalHearts)} lifetime)</span></span>
+            <span style={{ color: "#ffbe0b" }}>{Math.floor(stats.levelProg * 100)}% — SO CLOSE!</span>
+          </div>
+          <div className="progress"><div style={{ width: `${stats.levelProg * 100}%` }} /></div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, margin: "8px 0 4px" }}>
+            <span>🎫 Pass S1: {(s.bpClaimed ?? []).length}/20 claimed • {fmt(s.bpXp ?? 0)} XP</span>
+            <button className="btn-ghost" style={{ padding: "2px 10px", fontSize: 12 }} onClick={() => goMobile("pass")}>Open pass →</button>
+          </div>
+          <div className="progress"><div style={{ width: `${Math.min(100, ((s.bpXp ?? 0) / 24000) * 100)}%` }} /></div>
         </div>
-        <div className="progress"><div style={{ width: `${stats.levelProg * 100}%` }} /></div>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, margin: "8px 0 4px" }}>
-          <span>🎫 Pass S1: {(s.bpClaimed ?? []).length}/20 claimed • {fmt(s.bpXp ?? 0)} XP</span>
-          <button className="btn-ghost" style={{ padding: "2px 10px", fontSize: 12 }} onClick={() => goMobile("pass")}>Open pass →</button>
-        </div>
-        <div className="progress"><div style={{ width: `${Math.min(100, ((s.bpXp ?? 0) / 24000) * 100)}%` }} /></div>
       </div>
 
       {offlineMsg && (
