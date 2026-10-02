@@ -198,10 +198,15 @@ export default function Page() {
     setVoiceMuted(!!sv.muted || !!(sv as Save).voiceMuted);
     // Gate the game on preloaded portraits so images never flash black.
     // Remaining expressions keep warming in the background after start.
+    // Failsafe: never trap the player on the loader — start anyway after 12s.
     const sel = sv.selected ?? "yuki";
-    void preloadCritical(sel, (loaded, total) =>
+    const gate = preloadCritical(sel, (loaded, total) =>
       setAssets({ loaded, total, done: false })
-    ).then(() => {
+    );
+    void Promise.race([
+      gate,
+      new Promise<void>((res) => setTimeout(res, 12000)),
+    ]).then(() => {
       setAssets((a) => ({ ...a, done: true }));
       preloadRest(sel);
     });

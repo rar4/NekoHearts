@@ -7,7 +7,7 @@ body{
               radial-gradient(1000px 500px at 90% 0%, #cdb4ff 0%, transparent 55%),
               linear-gradient(180deg,#1a1033 0%, #2b1a4d 40%, #3d2358 100%);
   color:#fff; min-height:100vh;
-  overscroll-behavior-y:none;
+  overscroll-behavior-y:auto;
   -webkit-tap-highlight-color:transparent;
 }
 img{max-width:100%}
@@ -69,6 +69,7 @@ button{font-family:inherit;touch-action:manipulation}
 @keyframes zzzFloat{0%{transform:translateY(4px);opacity:0}30%{opacity:1}100%{transform:translateY(-8px);opacity:0}}
 .girl-dizzy-stars{transform-box:fill-box;transform-origin:center;animation:spinSlow 3s linear infinite}
 @keyframes spinSlow{to{transform:rotate(360deg)}}
+.scroll-thin{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .scroll-thin::-webkit-scrollbar{width:6px}
 .scroll-thin::-webkit-scrollbar-thumb{background:#ff5d8f88;border-radius:99px}
 
