@@ -69,7 +69,7 @@ button{font-family:inherit;touch-action:manipulation}
 @keyframes zzzFloat{0%{transform:translateY(4px);opacity:0}30%{opacity:1}100%{transform:translateY(-8px);opacity:0}}
 .girl-dizzy-stars{transform-box:fill-box;transform-origin:center;animation:spinSlow 3s linear infinite}
 @keyframes spinSlow{to{transform:rotate(360deg)}}
-.scroll-thin{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scroll-thin{touch-action:pan-y;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch}
 .scroll-thin::-webkit-scrollbar{width:6px}
 .scroll-thin::-webkit-scrollbar-thumb{background:#ff5d8f88;border-radius:99px}
 
