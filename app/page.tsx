@@ -673,9 +673,6 @@ export default function Page() {
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>⚡ PER CLICK</div><div style={{ fontSize: 22, fontWeight: 800 }}>{fmt(stats.clickPower)}</div></div>
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>⏱ PER SEC</div><div style={{ fontSize: 22, fontWeight: 800, color: "#7ef0c9" }}>{fmt(stats.cps)}</div></div>
           <div><div style={{ fontSize: 12, opacity: 0.7 }}>💎 GEMS</div><div style={{ fontSize: 22, fontWeight: 800, color: "#c4b5fd" }}>{s.gems}</div></div>
-          <button className="btn-pink" onClick={() => goMobile("vip")} style={{ padding: "8px 14px", fontSize: 13 }}>💎 VIP SHOP</button>
-          <button className="btn-ghost" onClick={toggleMute} title="toggle all sound">{s.muted ? "🔇 muted" : "🔊 sound"}</button>
-          <button className="btn-ghost" onClick={toggleVoice} title="toggle girl voice clips">{(s.voiceMuted || s.muted) ? "🎙 voice off" : "🎙 voice on"}</button>
         </div>
         {/* LEVEL BARS — live inside the main header now */}
         <div style={{ width: "100%" }}>
