@@ -1026,19 +1026,6 @@ export default function Page() {
         </div>
       </div>
 
-      {/* PSYCHOLOGY FOOTER */}
-      <div className="card" style={{ marginTop: 14, padding: 16, position: "relative", zIndex: 1 }}>
-        <b>🧠 Hook design notes (why this game is addictive — use responsibly):</b>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10, marginTop: 8, fontSize: 13, opacity: 0.9 }}>
-          <div>🎰 <b>Variable-ratio rewards</b> — crits (8%), mega (1% x100), gacha Mythic (~0.8%) fire unpredictably. Same schedule as slot machines.</div>
-          <div>⚡ <b>Combo + Frenzy x{3 + stats.overdriveLvl}</b> — loss-aversion: stopping breaks the combo. {stats.comboWindow.toFixed(1)}s decay forces rapid re-engagement = flow state. Frenzy hits at 25 combo, lasts {stats.frenzyTime}s.</div>
-          <div>💒 <b>Collection + parasocial bond</b> — locked slots (Zeigarnik), bond levels & dialogue fake a relationship that "needs" daily care.</div>
-          <div>📊 <b>Never-ending progress</b> — level bar always ~1 click from leveling, quests always 80% done, prestige resets you "stronger". No finish line.</div>
-          <div>🌟 <b>Golden hearts + daily streak + offline gains</b> — FOMO + endowed progress + reciprocity ("Luna earned while you were gone, come back!"). Goldens now pay 45x cps / 25x click.</div>
-          <div>💎 <b>Isekai prestige + VIP</b> — sunk-cost alchemy: turns quitting pain into "investment". Gems now +15% each, but rebirth costs 500K hearts. VIP gem items are permanent, whale-priced, and break the rules (auto-clicker, combo saver, divine pulls).</div>
-        </div>
-      </div>
-
       {/* MOBILE BOTTOM NAV — separate menu screens (hidden on desktop via CSS) */}
       <nav className="mobile-nav" aria-label="Game menu">
         <button className={mScreen === "clicker" ? "mnav-btn active" : "mnav-btn"} onClick={() => goMobile("clicker")} aria-label="Main clicker">
